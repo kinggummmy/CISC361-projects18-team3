@@ -4,6 +4,30 @@
 #include <string.h>
 #include <ctype.h>
 
+int sjf();
+int fifo();
+int rr();
+void printQueues();
+
+struct Job{
+    int memory;
+    int priority;
+    int devices_needed;
+    int time;
+};
+struct HoldQueue1{
+    struct Job;
+    struct HoldQueue1 *next;
+};
+struct HoldQueue2{
+    struct Job;
+    struct HoldQueue2 *next;
+};
+struct ReadyQueue{
+    struct Job;
+    struct ReadyQueue *next;
+};
+
 int TOTAL_MEMORY = 0;
 int SERIAL_DEVICES = 0;
 int TIME_SLICE = 0;
@@ -11,26 +35,19 @@ int MEM_REQUIRED = 0;
 int PRIORITY = 0;
 int JOB_NUMBER = 0;
 
-int sjf();
-int fifo();
-int rr();
-
-
 int main(){
     char x[100];
     FILE *ptr = fopen("input.txt", "r");
     fgets(x, 100, ptr);
     if(x[0] == 'C'){
-        char m_find = '=';
+        char m_find = 'M';
         int n = 0;
         char *found = strchr(x, m_find);
         char * end;
-        found = found + 1;
+        found = found + 2;
         found = strtok(found, " ");
         printf(found);
-        n = strtol(found, &end, 10);
-        printf("\n");
-        printf("%x\n", n);
+        TOTAL_MEMORY = strtol(found, &end, 10);
 
         SERIAL_DEVICES = 0;
 
@@ -38,6 +55,7 @@ int main(){
     }
     else{
         if(x[0] == 'D'){
+            printQueues();
         }
         else{
             if(x[0] == 'A'){
@@ -65,6 +83,9 @@ int main(){
     return 0;
 }
 
+void printQueues(){
+
+}
 
 int sjf(){
     int turnaroundTime[20], burstTime[20], waitTime[20], p[20], temp, posiiton, i, j, n, total = 0;
