@@ -39,53 +39,70 @@ int JOB_NUMBER = 0;
 int main(){
     char x[100];
     FILE *ptr = fopen("input.txt", "r");
-    /*while(!EOF)*/
-    fgets(x, 100, ptr);
-    if(x[0] == 'C'){
-        char *found[10];
-        char * end;
-        found[0] = strtok(x, " ");
-        for(int i = 1; i < 5; i++){
-            found[i] = strtok(NULL, " ");
-        }
-        TOTAL_MEMORY = strtol(found[2]+2, &end, 10);
-        SERIAL_DEVICES = strtol(found[3]+2, &end, 10);
-        TIME_SLICE = strtol(found[4]+2, &end, 10);
-    }
-    else{
-        if(x[0] == 'D'){
-            printQueues();
+    while(strstr(x, "9999") == NULL){
+        fgets(x, 100, ptr);
+        if(x[0] == 'C'){
+            char *found[10];
+            char * end;
+            found[0] = strtok(x, " ");
+            for(int i = 1; i < 5; i++){
+                found[i] = strtok(NULL, " ");
+            }
+            TOTAL_MEMORY = strtol(found[2]+2, &end, 10);
+            SERIAL_DEVICES = strtol(found[3]+2, &end, 10);
+            TIME_SLICE = strtol(found[4]+2, &end, 10);
         }
         else{
-            if(x[0] == 'A'){
-                char *found[10];
-                char * end;
-                int u, v, w, y, z;
-                found[0] = strtok(x, " ");
-                for(int i = 1; i < 7; i++){
-                    found[i] = strtok(NULL, " ");
-                }
-                v = strtol(found[2]+2, &end, 10);
-                w = strtol(found[3]+2, &end, 10);
-                y = strtol(found[4]+2, &end, 10);
-                z = strtol(found[5]+2, &end, 10);
-                u = strtol(found[6]+2, &end, 10);
-                struct Job new_job = {v, w, y, z, u};
-                printf("%x", v);
-                /*if(new_job.priority == 1){
-                    sjf();
-                }
-                else{
-                    fifo();
-                }*/
+            if(x[0] == 'D'){
+                printQueues();
             }
             else{
-                if(x[0] == 'Q'){
-
+                if(x[0] == 'A'){
+                    char *found[10];
+                    char * end;
+                    int u, v, w, y, z;
+                    found[0] = strtok(x, " ");
+                    for(int i = 1; i < 7; i++){
+                        found[i] = strtok(NULL, " ");
+                    }
+                    v = strtol(found[2]+2, &end, 10);
+                    w = strtol(found[3]+2, &end, 10);
+                    y = strtol(found[4]+2, &end, 10);
+                    z = strtol(found[5]+2, &end, 10);
+                    u = strtol(found[6]+2, &end, 10);
+                    struct Job new_job = {v, w, y, z, u};
+                    printf("%x", v);
+                    if(new_job.priority == 1){
+                        sjf();
+                    }
+                    else{
+                        fifo();   
+                    }
                 }
                 else{
-                    if(x[0] == 'L'){
-
+                    if(x[0] == 'Q'){
+                        char *found[10];
+                        char * end;
+                        int job_num, devices;
+                        found[0] = strtok(x, " ");
+                        for(int i = 1; i < 3; i++){
+                            found[i] = strtok(NULL, " ");
+                        }
+                        job_num = strtol(found[2]+2, &end, 10);
+                        devices = strtol(found[3]+2, &end, 10);
+                    }
+                    else{
+                        if(x[0] == 'L'){
+                            char *found[10];
+                            char * end;
+                            int job_num, devices;
+                            found[0] = strtok(x, " ");
+                            for(int i = 1; i < 3; i++){
+                                found[i] = strtok(NULL, " ");
+                            }
+                            job_num = strtol(found[2]+2, &end, 10);
+                            devices = strtol(found[3]+2, &end, 10);
+                        }
                     }
                 }
             }
@@ -96,7 +113,7 @@ int main(){
 }
 
 void printQueues(){
-
+    printf("AAAAA");
 }
 
 int sjf(){
