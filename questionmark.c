@@ -10,10 +10,11 @@ int rr();
 void printQueues();
 
 struct Job{
+    int num_job;
     int memory;
-    int priority;
     int devices_needed;
     int time;
+    int priority;
 };
 struct HoldQueue1{
     struct Job;
@@ -38,20 +39,18 @@ int JOB_NUMBER = 0;
 int main(){
     char x[100];
     FILE *ptr = fopen("input.txt", "r");
+    /*while(!EOF)*/
     fgets(x, 100, ptr);
     if(x[0] == 'C'){
-        char m_find = 'M';
-        int n = 0;
-        char *found = strchr(x, m_find);
+        char *found[10];
         char * end;
-        found = found + 2;
-        found = strtok(found, " ");
-        printf(found);
-        TOTAL_MEMORY = strtol(found, &end, 10);
-
-        SERIAL_DEVICES = 0;
-
-        TIME_SLICE = 0;
+        found[0] = strtok(x, " ");
+        for(int i = 1; i < 5; i++){
+            found[i] = strtok(NULL, " ");
+        }
+        TOTAL_MEMORY = strtol(found[2]+2, &end, 10);
+        SERIAL_DEVICES = strtol(found[3]+2, &end, 10);
+        TIME_SLICE = strtol(found[4]+2, &end, 10);
     }
     else{
         if(x[0] == 'D'){
@@ -59,13 +58,26 @@ int main(){
         }
         else{
             if(x[0] == 'A'){
-                MEM_REQUIRED = 0;
-                if(PRIORITY == 1){
+                char *found[10];
+                char * end;
+                int u, v, w, y, z;
+                found[0] = strtok(x, " ");
+                for(int i = 1; i < 7; i++){
+                    found[i] = strtok(NULL, " ");
+                }
+                v = strtol(found[2]+2, &end, 10);
+                w = strtol(found[3]+2, &end, 10);
+                y = strtol(found[4]+2, &end, 10);
+                z = strtol(found[5]+2, &end, 10);
+                u = strtol(found[6]+2, &end, 10);
+                struct Job new_job = {v, w, y, z, u};
+                printf("%x", v);
+                /*if(new_job.priority == 1){
                     sjf();
                 }
                 else{
                     fifo();
-                }
+                }*/
             }
             else{
                 if(x[0] == 'Q'){
