@@ -7,8 +7,10 @@
 int sjf();
 int fifo();
 int rr();
-void printQueues();
+void printQueues(char *x);
 
+/*Struct that creates a job, takes the job number, memory to be used, devices, time, and priority
+   Num Job mostly used for identification  */
 struct Job{
     int num_job;
     int memory;
@@ -16,14 +18,17 @@ struct Job{
     int time;
     int priority;
 };
+/* First hold queue struct, for Priority 1 Jobs */
 struct HoldQueue1{
     struct Job;
     struct HoldQueue1 *next;
 };
+/* Second hold queue struct, for Priority 2 Jobs */
 struct HoldQueue2{
     struct Job;
     struct HoldQueue2 *next;
 };
+/* Ready Queue Jobs */
 struct ReadyQueue{
     struct Job;
     struct ReadyQueue *next;
@@ -38,12 +43,16 @@ int JOB_NUMBER = 0;
 
 int main(){
     char x[100];
+    int q = 0;
     FILE *ptr = fopen("input.txt", "r");
-    while(strstr(x, "9999") == NULL){
+    /*While File does not end, will run D once*/
+    while(q == 0){
         fgets(x, 100, ptr);
         if(x[0] == 'C'){
+            /*Code for initilizing the machine*/
             char *found[10];
             char * end;
+            /*Adding all the values to a char array, seperated by spaces*/
             found[0] = strtok(x, " ");
             for(int i = 1; i < 5; i++){
                 found[i] = strtok(NULL, " ");
@@ -51,27 +60,42 @@ int main(){
             TOTAL_MEMORY = strtol(found[2]+2, &end, 10);
             SERIAL_DEVICES = strtol(found[3]+2, &end, 10);
             TIME_SLICE = strtol(found[4]+2, &end, 10);
+            printf("System with memory %d, %d Serial Devices, and Quantum Slice of %d Created\n", TOTAL_MEMORY, SERIAL_DEVICES, TIME_SLICE);
+
         }
         else{
             if(x[0] == 'D'){
-                printQueues();
+                /*If Time = 9999, End the while loop*/
+                if(x[2] == '9' && x[3] == '9'){
+                    printQueues(x);
+                    q = 1;
+                }
+                /*Else Print at time */
+                else{
+                    printQueues(x);
+                }
             }
             else{
+                /*
+                        Function for jobs being created
+                */
                 if(x[0] == 'A'){
                     char *found[10];
                     char * end;
-                    int u, v, w, y, z;
+                    int priority, job_num, memory, devices, time;
+                    /*Adding all the values to a char array, seperated by spaces*/
                     found[0] = strtok(x, " ");
                     for(int i = 1; i < 7; i++){
                         found[i] = strtok(NULL, " ");
                     }
-                    v = strtol(found[2]+2, &end, 10);
-                    w = strtol(found[3]+2, &end, 10);
-                    y = strtol(found[4]+2, &end, 10);
-                    z = strtol(found[5]+2, &end, 10);
-                    u = strtol(found[6]+2, &end, 10);
-                    struct Job new_job = {v, w, y, z, u};
-                    printf("%x", v);
+                    /*Reading all the specifications*/
+                    job_num = strtol(found[2]+2, &end, 10);
+                    memory = strtol(found[3]+2, &end, 10);
+                    devices = strtol(found[4]+2, &end, 10);
+                    time = strtol(found[5]+2, &end, 10);
+                    priority = strtol(found[6]+2, &end, 10);
+                    struct Job new_job = {job_num, memory, devices, time, priority};
+                    printf("Job #%d with Priority %d, %d Memory, %d Devices Needed, and a Time of %d Created\n", job_num,priority,memory,devices,time);
                     if(new_job.priority == 1){
                         sjf();
                     }
@@ -80,40 +104,55 @@ int main(){
                     }
                 }
                 else{
+                    /*
+                        Function for jobs reserving devices from the queue
+                    */
                     if(x[0] == 'Q'){
                         char *found[10];
                         char * end;
                         int job_num, devices;
+                        /*Adding all the values to a char array, seperated by spaces*/
                         found[0] = strtok(x, " ");
                         for(int i = 1; i < 3; i++){
                             found[i] = strtok(NULL, " ");
                         }
                         job_num = strtol(found[2]+2, &end, 10);
                         devices = strtol(found[3]+2, &end, 10);
+                        printf("Job #%d requesting %d Devices\n", job_num, devices);
                     }
                     else{
+                        /*
+                            Function for jobs releasing devices from the queue
+                        */
                         if(x[0] == 'L'){
                             char *found[10];
                             char * end;
                             int job_num, devices;
+                            /*Adding all the values to a char array, seperated by spaces*/
                             found[0] = strtok(x, " ");
                             for(int i = 1; i < 3; i++){
                                 found[i] = strtok(NULL, " ");
                             }
                             job_num = strtol(found[2]+2, &end, 10);
                             devices = strtol(found[3]+2, &end, 10);
+                            printf("Job #%d releasing %d Devices\n", job_num, devices);
                         }
                     }
                 }
             }
         }
     }
-    printf("Done");
     return 0;
 }
 
-void printQueues(){
-    printf("AAAAA");
+void printQueues(char *x){
+    char *found[1];
+    char * end;
+    found[0] = strtok(x, " ");
+    int time = strtol(found[0]+2, &end, 10);
+    printf("At Time: %d\n", time);
+    printf("Current Available Main Memory = %d\n", TOTAL_MEMORY);
+    printf("Current Devices = %d\n", SERIAL_DEVICES);
 }
 
 int sjf(){
@@ -122,7 +161,7 @@ int sjf(){
     printf("Enter # of processes:");
     scanf("%d",&n);
 
-    printf("nEnter Burst Time:n");
+    printf("\nEnter Burst Time:\n");
     for(i=0;i<n;i++)
     {
         printf("p%d:",i+1);
@@ -158,7 +197,7 @@ int sjf(){
     averageWait = (float)total/n;
     total = 0;
 
-    printf("nProcces    Burst Time  Wait Time   Turn Time");
+    printf("\nProccess    Burst Time  Wait Time   Turn Time\n");
     for(i=0; i<n; i++){
         turnaroundTime[i] = burstTime[i] + waitTime[i];
         total += turnaroundTime[i];
@@ -166,8 +205,8 @@ int sjf(){
     }
 
     averageTurn = (float)total/n;
-    printf("nnAverage Waiting Time=%f",averageWait);
-    printf("nAverage Turnaround Time=%fn",averageTurn);   
+    printf("\nAverage Waiting Time=%f",averageWait);
+    printf("\nAverage Turnaround Time=%f\n",averageTurn);   
 }
 
 int fifo(){
@@ -265,5 +304,4 @@ int rr(){
     averageTurn = turnaroundTime * 1.0/n;  
     printf("\n Average Turn Around Time: \t%f", averageWait);  
     printf("\n Average Waiting Time: \t%f", averageTurn);  
-    getch();      
 }
